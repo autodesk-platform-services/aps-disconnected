@@ -1,7 +1,7 @@
 const AccessTokenEndpoint = '/api/token'; // Use your own endpoint here
 const ListModelsEndpoint = '/api/models'; // Use your own endpoint here
 
-let currentApp = null; // Viewing application
+let viewer = null; // Viewing application
 let currentUrn = null; // Currently open URN
 let accessToken = null; // Access token used by the viewer
 
@@ -18,8 +18,8 @@ const options = {
 };
 
 Autodesk.Viewing.Initializer(options, () => {
-	currentApp = new Autodesk.Viewing.ViewingApplication('viewer');
-	currentApp.registerViewer(currentApp.k3D, Autodesk.Viewing.Private.GuiViewer3D);
+    viewer = new Autodesk.Viewing.GuiViewer3D(document.getElementById('viewer'));
+    viewer.start();
     initOverlay();
     updateOverlay();
     initServiceWorker();
@@ -112,9 +112,12 @@ function loadModel(urn) {
         viewerError.parentNode.removeChild(viewerError);
     }
 
-    function onDocumentLoadSuccess() {
-        const viewables = currentApp.bubble.search({ 'type': 'geometry' });
-        currentApp.selectItem(viewables[0].data, onItemLoadSuccess, onItemLoadFailure); // Assuming there's always at least one viewable
+    function onDocumentLoadSuccess(doc) {
+        viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function() {
+            currentUrn = urn;
+            updateOverlay();
+        });
+        viewer.loadDocumentNode(doc, doc.getRoot().getDefaultGeometry());
     }
     function onDocumentLoadFailure() {
         viewerError = document.createElement('div');
@@ -124,12 +127,6 @@ function loadModel(urn) {
         updateOverlay();
         console.error('Could not load document ' + urn);
     }
-    function onItemLoadSuccess(viewer) {
-        viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function() {
-            currentUrn = urn;
-            updateOverlay();
-        });
-    }
     function onItemLoadFailure() {
         updateOverlay();
         console.error('Could not load model from document ' + urn);
@@ -138,7 +135,7 @@ function loadModel(urn) {
     const status = document.querySelector(`#overlay > ul > li[data-urn="${urn}"] > .model-status`);
     status.style.setProperty('display', 'inline');
     status.innerHTML = '(loading...)';
-    currentApp.loadDocument('urn:' + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
+    Autodesk.Viewing.Document.load('urn:' + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
 }
 
 /**
