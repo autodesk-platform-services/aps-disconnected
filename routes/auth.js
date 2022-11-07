@@ -3,7 +3,7 @@ const express = require('express');
 const { AuthenticationClient } = require('autodesk-forge-tools');
 
 let router = express.Router();
-let auth = new AuthenticationClient(process.env.FORGE_CLIENT_ID, process.env.FORGE_CLIENT_SECRET);
+let auth = new AuthenticationClient(process.env.APS_CLIENT_ID, process.env.APS_CLIENT_SECRET);
 
 // GET /api/token
 // Gets a 2-legged authentication token.

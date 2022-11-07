@@ -1,13 +1,14 @@
-const CACHE_NAME = 'forge-disconnected-v4';
+const CACHE_NAME = 'aps-disconnected-v4';
 const MODEL_DERIVATIVE_PATH = 'developer.api.autodesk.com/derivativeservice/v2';
 
 const STATIC_URLS = [
     '/',
     '/index.html',
     '/fonts/Artifakt_Element_Regular.woff2',
-    '/images/forge-logo.png',
     '/javascript/main.js',
     '/stylesheets/main.css',
+    'https://cdn.autodesk.io/favicon.ico',
+    'https://cdn.autodesk.io/logo/black/stacked.png',
     'https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/style.css',
     'https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/viewer3D.js',
     'https://developer.api.autodesk.com/modelderivative/v2/viewers/6.*/lmvworker.js',

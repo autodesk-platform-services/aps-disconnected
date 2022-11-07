@@ -1,7 +1,7 @@
 {
-  "name": "forge-disconnected",
+  "name": "aps-disconnected",
   "version": "0.0.0",
-  "description": "Demonstration of disconnected workflows in Forge using Service Workers.",
+  "description": "Demonstration of disconnected workflows in APS using Service Workers.",
   "engines": {
     "node": "10.x.x"
   },
@@ -9,8 +9,7 @@
     "start": "node server.js"
   },
   "keywords": [
-    "autodesk",
-    "forge",
+    "autodesk-platform-services",
     "disconnected",
     "service-worker"
   ],

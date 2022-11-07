@@ -102,7 +102,7 @@ async function updateOverlay() {
 }
 
 /**
- * Loads a Forge document into the viewer. Returns a promise that resolves
+ * Loads an APS model into the viewer. Returns a promise that resolves
  * after the model has been loaded and the Autodesk.Viewing.GEOMETRY_LOADED_EVENT
  * event has triggered.
  */

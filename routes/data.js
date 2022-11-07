@@ -8,17 +8,17 @@ const BaseUrl = 'https://developer.api.autodesk.com';
 const Scopes = ['viewables:read', 'data:read'];
 
 let router = express.Router();
-let auth = new AuthenticationClient(process.env.FORGE_CLIENT_ID, process.env.FORGE_CLIENT_SECRET);
+let auth = new AuthenticationClient(process.env.APS_CLIENT_ID, process.env.APS_CLIENT_SECRET);
 let data = new DataManagementClient(auth);
 
 // GET /api/models
-// Returns a JSON array of objects in our application's bucket ($FORGE_BUCKET),
+// Returns a JSON array of objects in our application's bucket ($APS_BUCKET),
 // with each item in the array containing properties 'bucketKey', 'objectKey',
 // 'objectId', 'sha1', 'size', and 'location'.
 router.get('/api/models', async function(req, res, next) {
     try {
         let objects = [];
-        for await (const page of data.objects(process.env.FORGE_BUCKET)) {
+        for await (const page of data.objects(process.env.APS_BUCKET)) {
             objects.push(...page);
         }
         res.json(objects);

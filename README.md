@@ -1,17 +1,17 @@
-# forge-disconnected
+# aps-disconnected
 
-Sample [Autodesk Forge](https://forge.autodesk.com/) application using
+Sample [Autodesk Platform Services](https://aps.autodesk.com/) application using
 [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 and [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) APIs to provide
 a limited offline support, allowing you to cache selected models and view them
 without internet connection.
 
-Live demo is available at https://forge-disconnected.autodesk.io.
+Live demo is available at https://aps-disconnected.autodesk.io.
 
 ## Running locally
 
 - Install dependencies: `npm install`
-- Define your `FORGE_CLIENT_ID`, `FORGE_CLIENT_SECRET`, and `FORGE_BUCKET` env. variables
+- Define your `APS_CLIENT_ID`, `APS_CLIENT_SECRET`, and `APS_BUCKET` env. variables
 - Run the server: `npm start`
 - Go to [localhost:3000](http://localhost:3000)
 - After loading one of the example models, you should see a `☆` symbol next to its name,
@@ -28,15 +28,15 @@ with service workers. The _Service Workers_ section shows any running workers, p
 links to their source code, and allows you to update or unregister them. In the _Cache Storage_
 section you'll find the cache objects associated with the corresponding site.
 
-<img src="https://petrbroz.github.io/forge-disconnected/assets/chrome-serviceworkers.png" alt="Chrome - Service Workers" width="500">
+<img src="docs/chrome-serviceworkers.png" alt="Chrome - Service Workers" width="500">
 
-<img src="https://petrbroz.github.io/forge-disconnected/assets/chrome-caches.png" alt="Chrome - Cache Objects" width="500">
+<img src="docs/chrome-caches.png" alt="Chrome - Cache Objects" width="500">
 
 In Firefox, you can use the [about:serviceworkers](about:serviceworkers) or
 [about:debugging#workers](about:debugging#workers) URL to get a detailed information
 about service workers currently registered for various websites.
 
-<img src="https://petrbroz.github.io/forge-disconnected/assets/firefox-serviceworkers.png" alt="Firefox - Service Workers" width="500">
+<img src="docs/firefox-serviceworkers.png" alt="Firefox - Service Workers" width="500">
 
 ## Caching strategy
 
@@ -48,7 +48,7 @@ environments are cached: _Sharp Highlighs_ and _Boardwalk_. If you want to inclu
 other static assets, perhaps including your own viewer extensions, don't forget
 to include them in the list.
 
-A single document in Forge typically generates multiple derivatives, and derivatives
+A single model in APS typically generates multiple derivatives, and derivatives
 themselves often reference additional assets. We need a way to identify these assets
 in order to cache them when needed. In this sample application, the server provides
 a `GET /api/models/:urn/files` endpoint which is inspired by https://extract.autodesk.io
