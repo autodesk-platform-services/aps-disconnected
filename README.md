@@ -1,10 +1,12 @@
-# aps-disconnected
+# Disconnected Workflows
 
 Sample [Autodesk Platform Services](https://aps.autodesk.com/) application using
 [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 and [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) APIs to provide
 a limited offline support, allowing you to cache selected models and view them
 without internet connection.
+
+![screenshot](./thumbnail.png)
 
 Live demo is available at https://aps-disconnected.autodesk.io.
 

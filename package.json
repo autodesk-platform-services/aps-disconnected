@@ -13,7 +13,6 @@
     "disconnected",
     "service-worker"
   ],
-  "author": "Petr Broz <petr.broz@autodesk.com>",
   "license": "MIT",
   "dependencies": {
     "autodesk-forge-tools": "0.2.0",
