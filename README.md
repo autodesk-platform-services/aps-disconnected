@@ -6,7 +6,7 @@ and [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) APIs to prov
 a limited offline support, allowing you to cache selected models and view them
 without internet connection.
 
-![screenshot](./thumbnail.png)
+![thumbnail](./thumbnail.png)
 
 Live demo is available at https://aps-disconnected.autodesk.io.
 
