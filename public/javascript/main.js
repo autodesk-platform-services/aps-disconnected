@@ -66,7 +66,7 @@ function initOverlay() {
 async function updateOverlay() {
     // If [Storage Manager API](https://developer.mozilla.org/en-US/docs/Web/API/StorageManager)
     // is available, update the used/quota numbers
-    if ('storage' in navigator) {
+    if (navigator?.storage?.estimate) {
         navigator.storage.estimate().then(function(estimate) {
             const usage = (estimate.usage / Math.pow(2, 20)).toFixed(2);
             const quota = (estimate.quota / Math.pow(2, 20)).toFixed(2);
