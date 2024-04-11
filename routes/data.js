@@ -2,14 +2,37 @@ const fetch = require('node-fetch');
 const zip = require('node-zip');
 const zlib = require('zlib');
 const express = require('express');
+const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
+const { AuthenticationClient, Scopes } = require('@aps_sdk/authentication');
+const { OssClient } = require('@aps_sdk/oss');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET} = process.env;
 
-const { AuthenticationClient, DataManagementClient } = require('autodesk-forge-tools');
 const BaseUrl = 'https://developer.api.autodesk.com';
-const Scopes = ['viewables:read', 'data:read'];
-
+const sdkManager = SdkManagerBuilder.create().build();
+const authenticationClient = new AuthenticationClient(sdkManager);
+const ossClient = new OssClient(sdkManager);
 let router = express.Router();
-let auth = new AuthenticationClient(process.env.APS_CLIENT_ID, process.env.APS_CLIENT_SECRET);
-let data = new DataManagementClient(auth);
+
+let _credentials = null;
+async function getAccessToken() {
+    if (!_credentials || _credentials.expires_at < Date.now()) {
+        _credentials = await authenticationClient.getTwoLeggedToken(APS_CLIENT_ID, APS_CLIENT_SECRET, [Scopes.DataRead, Scopes.ViewablesRead]);
+        _credentials.expires_at = Date.now() + _credentials.expires_in * 1000;
+    }
+    return _credentials.access_token;
+}
+
+async function listObjects(bucketKey) {
+    const accessToken = await getAccessToken();
+    let resp = await ossClient.getObjects(accessToken, bucketKey, { limit: 64 });
+    let objects = resp.items;
+    while (resp.next) {
+        const startAt = new URL(resp.next).searchParams.get('startAt');
+        resp = await ossClient.getObjects(accessToken, bucketKey, { startAt, limit: 64 });
+        objects = objects.concat(resp.items);
+    }
+    return objects;
+}
 
 // GET /api/models
 // Returns a JSON array of objects in our application's bucket ($APS_BUCKET),
@@ -17,10 +40,7 @@ let data = new DataManagementClient(auth);
 // 'objectId', 'sha1', 'size', and 'location'.
 router.get('/api/models', async function(req, res, next) {
     try {
-        let objects = [];
-        for await (const page of data.objects(process.env.APS_BUCKET)) {
-            objects.push(...page);
-        }
+        const objects = await listObjects(APS_BUCKET);
         res.json(objects);
     } catch(err) {
         next(err);
@@ -32,17 +52,17 @@ router.get('/api/models', async function(req, res, next) {
 // and a list of files each derivative depends on.
 router.get('/api/models/:urn/files', async function(req, res, next) {
     try {
-        const authentication = await auth.authenticate(Scopes);
-        const manifest = await getManifest(req.params.urn, authentication.access_token);
+        const accessToken = await getAccessToken();
+        const manifest = await getManifest(req.params.urn, accessToken);
         const items = parseManifest(manifest);
         const derivatives = items.map(async (item) => {
             let files = [];
             switch (item.mime) {
                 case 'application/autodesk-svf':
-                    files = await getDerivativesSVF(item.urn, authentication.access_token);
+                    files = await getDerivativesSVF(item.urn, accessToken);
                     break;
                 case 'application/autodesk-f2d':
-                    files = await getDerivativesF2D(item, authentication.access_token);
+                    files = await getDerivativesF2D(item, accessToken);
                     break;
                 case 'application/autodesk-db':
                     files = ['objects_attrs.json.gz', 'objects_vals.json.gz', 'objects_offs.json.gz', 'objects_ids.json.gz', 'objects_avs.json.gz', item.rootFileName];
@@ -124,8 +144,7 @@ async function getDerivative(urn, token) {
 async function getDerivativesSVF(urn, token) {
     const data = await getDerivative(urn, token);
     const pack = new zip(data, { checkCRC32: true, base64: false });
-    const manifestData = pack.files['manifest.json'].asNodeBuffer();
-    const manifest = JSON.parse(manifestData.toString('utf8'));
+    const manifest = JSON.parse(pack.files['manifest.json'].asText());
     if (!manifest.assets) {
         return [];
     }

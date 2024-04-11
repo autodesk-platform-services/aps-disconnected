@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Demonstration of disconnected workflows in APS using Service Workers.",
   "engines": {
-    "node": "10.x.x"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "start": "node server.js"
@@ -15,10 +15,12 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "autodesk-forge-tools": "0.2.0",
+    "@aps_sdk/authentication": "^0.1.0-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "^0.0.7-beta.1",
+    "@aps_sdk/oss": "^0.1.0-beta.1",
     "express": "^4.16.3",
     "node-fetch": "^2.2.0",
-    "node-zip": "^1.1.1",
+    "node-zip": "^1.0.1",
     "zlib": "^1.0.5"
   }
 }
